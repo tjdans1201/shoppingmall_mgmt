@@ -3,18 +3,20 @@ from django.db import models
 # Create your models here.
 class Delivery(models.Model):
     id = models.AutoField(primary_key=True)  # id
-    date = models.DateField(auto_now=True)  # 주문일자
+    date = models.DateField(auto_now_add=True)  # 주문일자
     pay_state = models.CharField(default="결제대기", max_length=200)  # 결제상태
     quantity = models.IntegerField()  # 수량
-    price = models.IntegerField()  # 가격
+    price = models.FloatField()  # 가격
     buyr_city = models.CharField(max_length=200)  # 주문자 도시
     buyr_country = models.CharField(max_length=200)  # 주문자 국가
     buyr_zipx = models.CharField(max_length=200)  # 주문자 우편번호
     vccode = models.IntegerField(blank=True, null=True)  # 보류
     delivery_state = models.CharField(default="제품준비중", max_length=200)  # 배송 상태
     delivery_num = models.IntegerField(null=True, blank=True)  # 송장번호
-    delivery_cost = models.IntegerField()  # 배송비
-    total_price = models.IntegerField()  # 합계 가격 -> 제품가격 + 배송비
+    delivery_cost = models.FloatField()  # 배송비
+    total_price = models.FloatField()  # 합계 가격 -> 제품가격 + 배송비
+    buyr_name = models.CharField(max_length=20) # 주문자 명
+    
 
 
 class ContryCode(models.Model):
