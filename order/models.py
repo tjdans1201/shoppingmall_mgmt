@@ -15,8 +15,10 @@ class Delivery(models.Model):
     delivery_num = models.IntegerField(null=True, blank=True)  # 송장번호
     delivery_cost = models.FloatField()  # 배송비
     total_price = models.FloatField()  # 합계 가격 -> 제품가격 + 배송비
-    buyr_name = models.CharField(max_length=20) # 주문자 명
-    
+    buyr_name = models.CharField(max_length=20)  # 주문자 명
+    used_coupon_code = models.ForeignKey(
+        "coupon.CouponCode", on_delete=models.SET_NULL, null=True
+    )
 
 
 class ContryCode(models.Model):
@@ -132,3 +134,4 @@ class DeliveryCost(models.Model):
     Tanzania = models.IntegerField()
     Tunisia = models.IntegerField()
     Zambia = models.IntegerField()
+    South_Korea = models.IntegerField()

@@ -1,4 +1,3 @@
-from ast import Del
 from rest_framework import serializers
 from .models import Delivery
 
@@ -14,8 +13,10 @@ class DeliverySerializer(serializers.ModelSerializer):
             "buyr_zipx",
             "delivery_cost",
             "total_price",
-            "buyr_name"
+            "buyr_name",
+            "used_coupon_code",
         ]
+
 
 class DeliveryListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,10 +34,12 @@ class DeliveryListSerializer(serializers.ModelSerializer):
             "buyr_zipx",
             "delivery_num",
             "delivery_state",
-            "buyr_name"
+            "buyr_name",
+            "used_coupon_code",
         ]
+
 
 class DeliveryUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Delivery
-        fields = ["pay_state","delivery_state"]
+        fields = ["pay_state", "delivery_state"]
