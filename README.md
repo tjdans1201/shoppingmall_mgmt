@@ -15,7 +15,7 @@
  - **Back-End** : Python, Django, Django REST framework, postgresql
  
 ## ERD
-Todo
+<img width="196" alt="erd" src="https://user-images.githubusercontent.com/57758265/190105211-07cd9e59-db9b-42b9-8fa3-7a1ad4953d5c.png">
 
 ## API_DOCS
 
@@ -437,7 +437,7 @@ Response Example
 
 
 ## Unit test
-- 각 method에 대해 유닛테스트 실행
-TODO
+- 각 API에 대해 유닛테스트 실행(7개)
+<img width="461" alt="화면 캡처 2022-09-07 144024" src="https://user-images.githubusercontent.com/57758265/190106342-35866266-972f-4918-9079-3cdcdd670fb6.png">
 
 
