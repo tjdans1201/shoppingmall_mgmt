@@ -1,0 +1,5 @@
+id,date,pay_state,quantity,price,buyr_city,buyr_country,buyr_zipx,vccode,delivery_state,delivery_num,delivery_cost,total_price,buyr_name,used_coupon_code_id
+1,"2022-09-14","결제완료",1,10000,"incheon","KR","21082",1,"배송완료",1,36000,46000,yun,1
+2,"2022-09-14","결제완료",1,10000,"incheon","KR","21082",1,"배송완료",1,36000,46000,yun,1
+3,"2022-09-14","결제완료",1,10000,"incheon","KR","21082",1,"배송중",1,36000,46000,yun,1
+4,"2022-09-14","결제대기",1,10000,"incheon","KR","21082",1,"배송준비중",1,36000,46000,test,1
