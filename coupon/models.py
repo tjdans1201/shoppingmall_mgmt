@@ -14,7 +14,7 @@ class CouponCode(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
-    coupon_code = models.CharField(max_length=20)
+    coupon_code = models.CharField(max_length=20,unique=True)
     amount = models.IntegerField()
 
 
