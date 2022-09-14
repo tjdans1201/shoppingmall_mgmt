@@ -18,12 +18,14 @@ class CouponsAPI(APIView):
         """
         try:
             request_body = request.data
-            coupon_code = CouponCode.objects.filter(coupon_code = request_body["coupon_code"])
-            if len(coupon_code)>0:
+            coupon_code = CouponCode.objects.filter(
+                coupon_code=request_body["coupon_code"]
+            )
+            if len(coupon_code) > 0:
                 return Response(
-                        {"message": "이미 존재하는 쿠폰 코드입니다."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                    {"message": "이미 존재하는 쿠폰 코드입니다."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             # % 할인 쿠폰일 경우, 100을 초과하지 못함
             if request_body["coupon_type"] == 2:
                 if request_body["amount"] > 100:

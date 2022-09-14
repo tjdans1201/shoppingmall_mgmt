@@ -1,13 +1,13 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
-from coupon.models import CouponCode, CouponHistory,CouponType
+from coupon.models import CouponCode, CouponHistory, CouponType
 from order.models import Delivery, DeliveryCost, ContryCode
 from unittest import mock
 import os
 import pandas as pd
 import json
-# Create your tests here.
 
+# Create your tests here.
 
 
 curDir = os.path.dirname(os.path.normpath(__file__))
@@ -23,6 +23,8 @@ def set_dummy():
         for x in dict_df
     ]
     CouponType.objects.bulk_create(coupon_types)
+
+
 # 더미데이터 생성(delivery_cost)
 def set_dummy_delivery_cost():
     df = pd.read_csv(curDir + "/dummy/delivery_cost.csv")
@@ -140,6 +142,8 @@ def set_dummy_delivery_cost():
     ]
     DeliveryCost.objects.bulk_create(delivery_costs)
     print("delivery_cost finish")
+
+
 # 더미데이터 생성(country_code)
 def set_dummy_country_code():
     df = pd.read_csv(curDir + "/dummy/country_code.csv")
@@ -149,11 +153,13 @@ def set_dummy_country_code():
             country_idx=x["country_idx"],
             country_code=x["country_code"],
             country_dcode=x["country_dcode"],
-            country_name=x["country_name"]
+            country_name=x["country_name"],
         )
         for x in dict_df
     ]
     ContryCode.objects.bulk_create(country_codes)
+
+
 # 더미데이터 생성(coupon_code)
 def set_dummy_coupon():
     df = pd.read_csv(curDir + "/dummy/coupon_code.csv")
@@ -163,11 +169,12 @@ def set_dummy_coupon():
             id=x["id"],
             amount=x["amount"],
             coupon_code=x["coupon_code"],
-            coupon_type_id = x["coupon_type_id"]
+            coupon_type_id=x["coupon_type_id"],
         )
         for x in dict_df
     ]
     CouponCode.objects.bulk_create(coupons)
+
 
 # 더미데이터 생성(delivery)
 def set_dummy_delivery():
@@ -178,22 +185,23 @@ def set_dummy_delivery():
             id=x["id"],
             date=x["date"],
             pay_state=x["pay_state"],
-            quantity = x["quantity"],
-            price = x["price"],
+            quantity=x["quantity"],
+            price=x["price"],
             buyr_city=x["buyr_city"],
-            buyr_country = x["buyr_country"],
-            buyr_zipx = x["buyr_zipx"],
+            buyr_country=x["buyr_country"],
+            buyr_zipx=x["buyr_zipx"],
             vccode=x["vccode"],
-            delivery_state = x["delivery_state"],
-            delivery_num = x["delivery_num"],
+            delivery_state=x["delivery_state"],
+            delivery_num=x["delivery_num"],
             delivery_cost=x["delivery_cost"],
-            total_price = x["total_price"],
-            buyr_name = x["buyr_name"],
-            used_coupon_code_id = x["used_coupon_code_id"],
+            total_price=x["total_price"],
+            buyr_name=x["buyr_name"],
+            used_coupon_code_id=x["used_coupon_code_id"],
         )
         for x in dict_df
     ]
     Delivery.objects.bulk_create(deliverys)
+
 
 # # 환율 요청 mock
 # def call_exchange_rate_success(url, timeout=None, status_code=None):
@@ -231,13 +239,39 @@ class TestCoupon(TestCase):
         # case_1 : 주문 등록(쿠폰 적용하지 않음), 해외
         result = client.post(
             "/api/orders",
-            {"buyr_name":"yun","buyr_country":"IN", "buyr_city":"mumbai", "buyr_zipx":"aa11", "quantity":1, "price":100,"coupon_code":""},
+            {
+                "buyr_name": "yun",
+                "buyr_country": "IN",
+                "buyr_city": "mumbai",
+                "buyr_zipx": "aa11",
+                "quantity": 1,
+                "price": 100,
+                "coupon_code": "",
+            },
             format="json",
         )
-        exp = {"message": '주문이 등록되었습니다.'}
-        delivery = Delivery.objects.get(id = 1)
-        restored_exp= {"id":1 ,"buyr_name":"yun","buyr_country":"IN", "buyr_city":"mumbai", "buyr_zipx":"aa11", "quantity":1, "price":100,"used_coupon_code_id":None}
-        restored = {"id":delivery.id ,"buyr_name":delivery.buyr_name,"buyr_country":delivery.buyr_country, "buyr_city":delivery.buyr_city, "buyr_zipx":delivery.buyr_zipx, "quantity":delivery.quantity, "price":delivery.price,"used_coupon_code_id":delivery.used_coupon_code_id}
+        exp = {"message": "주문이 등록되었습니다."}
+        delivery = Delivery.objects.get(id=1)
+        restored_exp = {
+            "id": 1,
+            "buyr_name": "yun",
+            "buyr_country": "IN",
+            "buyr_city": "mumbai",
+            "buyr_zipx": "aa11",
+            "quantity": 1,
+            "price": 100,
+            "used_coupon_code_id": None,
+        }
+        restored = {
+            "id": delivery.id,
+            "buyr_name": delivery.buyr_name,
+            "buyr_country": delivery.buyr_country,
+            "buyr_city": delivery.buyr_city,
+            "buyr_zipx": delivery.buyr_zipx,
+            "quantity": delivery.quantity,
+            "price": delivery.price,
+            "used_coupon_code_id": delivery.used_coupon_code_id,
+        }
         print(delivery)
         print(result.data)
         self.assertEqual(result.status_code, 201)
@@ -247,13 +281,41 @@ class TestCoupon(TestCase):
         # case_2 : 주문 등록(쿠폰 적용하지 않음), 국내
         result = client.post(
             "/api/orders",
-            {"buyr_name":"yun","buyr_country":"KR", "buyr_city":"incheon", "buyr_zipx":"21082", "quantity":1, "price":10000,"coupon_code":""},
+            {
+                "buyr_name": "yun",
+                "buyr_country": "KR",
+                "buyr_city": "incheon",
+                "buyr_zipx": "21082",
+                "quantity": 1,
+                "price": 10000,
+                "coupon_code": "",
+            },
             format="json",
         )
-        exp = {"message": '주문이 등록되었습니다.'}
-        delivery = Delivery.objects.get(id = 2)
-        restored_exp= {"id":2 ,"buyr_name":"yun","buyr_country":"KR", "buyr_city":"incheon", "buyr_zipx":"21082", "quantity":1, "price":10000.0,"used_coupon_code_id":None, "delivery_cost":36000}
-        restored = {"id":delivery.id ,"buyr_name":delivery.buyr_name,"buyr_country":delivery.buyr_country, "buyr_city":delivery.buyr_city, "buyr_zipx":delivery.buyr_zipx, "quantity":delivery.quantity, "price":delivery.price,"used_coupon_code_id":delivery.used_coupon_code_id, "delivery_cost":delivery.delivery_cost}
+        exp = {"message": "주문이 등록되었습니다."}
+        delivery = Delivery.objects.get(id=2)
+        restored_exp = {
+            "id": 2,
+            "buyr_name": "yun",
+            "buyr_country": "KR",
+            "buyr_city": "incheon",
+            "buyr_zipx": "21082",
+            "quantity": 1,
+            "price": 10000.0,
+            "used_coupon_code_id": None,
+            "delivery_cost": 36000,
+        }
+        restored = {
+            "id": delivery.id,
+            "buyr_name": delivery.buyr_name,
+            "buyr_country": delivery.buyr_country,
+            "buyr_city": delivery.buyr_city,
+            "buyr_zipx": delivery.buyr_zipx,
+            "quantity": delivery.quantity,
+            "price": delivery.price,
+            "used_coupon_code_id": delivery.used_coupon_code_id,
+            "delivery_cost": delivery.delivery_cost,
+        }
         print(delivery)
         print(result.data)
         self.assertEqual(result.status_code, 201)
@@ -263,7 +325,15 @@ class TestCoupon(TestCase):
         # case_3 : 존재하지 않는 쿠폰 적용
         result = client.post(
             "/api/orders",
-            {"buyr_name":"yun","buyr_country":"KR", "buyr_city":"incheon", "buyr_zipx":"21082", "quantity":1, "price":10000,"coupon_code":"aaaaaa"},
+            {
+                "buyr_name": "yun",
+                "buyr_country": "KR",
+                "buyr_city": "incheon",
+                "buyr_zipx": "21082",
+                "quantity": 1,
+                "price": 10000,
+                "coupon_code": "aaaaaa",
+            },
             format="json",
         )
         exp = {"message": "해당 쿠폰이 없습니다."}
@@ -272,30 +342,57 @@ class TestCoupon(TestCase):
         self.assertEqual(result.status_code, 400)
         self.assertEqual(result.data, exp)
 
-
         # case_4 : 주문 등록(배송비 1000원 할인 쿠폰 적용), 국내
         result = client.post(
             "/api/orders",
-            {"buyr_name":"yun","buyr_country":"KR", "buyr_city":"incheon", "buyr_zipx":"21082", "quantity":1, "price":10000,"coupon_code":"testcode1"},
+            {
+                "buyr_name": "yun",
+                "buyr_country": "KR",
+                "buyr_city": "incheon",
+                "buyr_zipx": "21082",
+                "quantity": 1,
+                "price": 10000,
+                "coupon_code": "testcode1",
+            },
             format="json",
         )
-        exp = {"message": '주문이 등록되었습니다.'}
-        delivery = Delivery.objects.get(id = 3)
-        restored_exp= {"id":3 ,"buyr_name":"yun","buyr_country":"KR", "buyr_city":"incheon", "buyr_zipx":"21082", "quantity":1, "price":10000.0,"used_coupon_code_id":1, "delivery_cost":35000}
-        restored = {"id":delivery.id ,"buyr_name":delivery.buyr_name,"buyr_country":delivery.buyr_country, "buyr_city":delivery.buyr_city, "buyr_zipx":delivery.buyr_zipx, "quantity":delivery.quantity, "price":delivery.price,"used_coupon_code_id":delivery.used_coupon_code_id,"delivery_cost":delivery.delivery_cost}
+        exp = {"message": "주문이 등록되었습니다."}
+        delivery = Delivery.objects.get(id=3)
+        restored_exp = {
+            "id": 3,
+            "buyr_name": "yun",
+            "buyr_country": "KR",
+            "buyr_city": "incheon",
+            "buyr_zipx": "21082",
+            "quantity": 1,
+            "price": 10000.0,
+            "used_coupon_code_id": 1,
+            "delivery_cost": 35000,
+        }
+        restored = {
+            "id": delivery.id,
+            "buyr_name": delivery.buyr_name,
+            "buyr_country": delivery.buyr_country,
+            "buyr_city": delivery.buyr_city,
+            "buyr_zipx": delivery.buyr_zipx,
+            "quantity": delivery.quantity,
+            "price": delivery.price,
+            "used_coupon_code_id": delivery.used_coupon_code_id,
+            "delivery_cost": delivery.delivery_cost,
+        }
         print(delivery)
         print(result.data)
         self.assertEqual(result.status_code, 201)
         self.assertEqual(result.data, exp)
         self.assertEqual(restored, restored_exp)
         history = CouponHistory.objects.get(id=1)
-        coupon_history_exp = {"id":1, "discount_amount":1000,"used_coupon_id":1}
-        coupon_history= {"id":history.id, "discount_amount":history.discount_amount,"used_coupon_id":history.used_coupon_id}
+        coupon_history_exp = {"id": 1, "discount_amount": 1000, "used_coupon_id": 1}
+        coupon_history = {
+            "id": history.id,
+            "discount_amount": history.discount_amount,
+            "used_coupon_id": history.used_coupon_id,
+        }
         self.assertEqual(coupon_history, coupon_history_exp)
-
-      
-
-      
 
     def test_get_order_list(self):
         print("-----------------------------------------")
@@ -312,34 +409,25 @@ class TestCoupon(TestCase):
         test_3.save()
         client = APIClient()
         # case_1 검색 조건이 없는 경우
-        result = client.get(
-            "/api/orders"
-        )
+        result = client.get("/api/orders")
         print(result.data)
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(result.data["order_list"]), 4)
 
         # case_2 날짜 지정(2022-09-14~2022-09-15)
-        result = client.get(
-            "/api/orders?start_date=2022-09-14&end_date=2022-09-15"
-        )
+        result = client.get("/api/orders?start_date=2022-09-14&end_date=2022-09-15")
         print(result.data)
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(result.data["order_list"]), 2)
 
-        
         # case_3 결제상태 지정("결제완료")
-        result = client.get(
-            "/api/orders?pay_state=결제완료"
-        )
+        result = client.get("/api/orders?pay_state=결제완료")
         print(result.data)
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(result.data["order_list"]), 3)
 
         # case_4 주문자명 지정("test")
-        result = client.get(
-            "/api/orders?buyr_name=test"
-        )
+        result = client.get("/api/orders?buyr_name=test")
         print(result.data)
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(result.data["order_list"]), 1)
@@ -352,13 +440,13 @@ class TestCoupon(TestCase):
         # case_1 결제 대기에서 결제 완료로 변경
         result = client.put(
             "/api/orders/update/pay_state/4",
-            {"pay_state":"결제완료"},
+            {"pay_state": "결제완료"},
             format="json",
         )
         print(result)
         print(result.data)
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(result.data,{'message': '결제정보가 수정되었습니다.'})
+        self.assertEqual(result.data, {"message": "결제정보가 수정되었습니다."})
         delivery = Delivery.objects.get(id=4)
         self.assertEqual(delivery.pay_state, "결제완료")
 
@@ -370,12 +458,12 @@ class TestCoupon(TestCase):
         # case_1 배송준비중에서 배송완료로 변경
         result = client.put(
             "/api/orders/update/delivery_state/4",
-            {"delivery_state":"배송완료"},
+            {"delivery_state": "배송완료"},
             format="json",
         )
         print(result)
         print(result.data)
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(result.data,{'message': '배송정보가 수정되었습니다.'})
+        self.assertEqual(result.data, {"message": "배송정보가 수정되었습니다."})
         delivery = Delivery.objects.get(id=4)
         self.assertEqual(delivery.pay_state, "배송완료")

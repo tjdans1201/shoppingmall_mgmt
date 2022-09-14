@@ -12,8 +12,8 @@ class CouponCreateSerializer(serializers.ModelSerializer):
             "amount",
         ]
 
+
 class CouponHistoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CouponHistory
         fields = ["used_coupon", "discount_amount"]
-
