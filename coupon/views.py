@@ -11,10 +11,29 @@ class CouponsAPI(APIView):
     def post(self, request):
         """
         쿠폰 생성
-        coupon_type에 따라 쿠폰 종류가 다름
+        coupon_type에 따라 쿠폰 종류가 다름(coupon_type table에 지정)
         1: 배송비 정액 할인
         2: 상품가 %할인
         3: 상품가 정액 할인
+
+        Args:
+            request.data : {"coupon_type":int, "amount":int, "coupon_code":str}
+
+        Returns:
+            200 : {
+                        "coupon_history_list": [
+                            {
+                                "id": int,
+                                "actual_discount_amount": float,
+                                "coupon_type": str,
+                                "coupon_code": str,
+                                "coupon_id": int,
+                                "discount": int
+                            }
+                        ]
+                    }
+            400 : {"message" : "리퀘스트 에러가 발생하였습니다."}
+            500 : {"message" : "서버 에러가 발생하였습니다."}
         """
         try:
             request_body = request.data
@@ -54,6 +73,24 @@ class CouponsAPI(APIView):
     def get(self, request):
         """
         모든 쿠폰의 사용내역을 조회
+
+        Args:
+            id : int
+
+        Returns:
+            200 : {
+                        "coupon_history_list": [
+                            {
+                                "id": int,
+                                "actual_discount_amount": float,
+                                "coupon_type": str,
+                                "coupon_code": str,
+                                "coupon_id": int,
+                                "discount": int
+                            }
+                        ]
+                    }
+            500 : {"message" : "서버 에러가 발생하였습니다."}
         """
         try:
             # 모든 쿠폰사용내역 조회
@@ -80,11 +117,17 @@ class CouponsAPI(APIView):
 
 
 class CouponAPI(APIView):
-    """
-    해당 쿠폰의 총 사용횟수와 총 할인액을 조회
-    """
-
     def get(self, request, id):
+        """
+        해당 쿠폰의 사용횟수 및 총 할인액 조회
+
+        Args:
+            id : int
+
+        Returns:
+            200 : {"count": int, "total_discount": float}
+            500 : {"message" : "서버 에러가 발생하였습니다."}
+        """    
         try:
             history = CouponHistory.objects.filter(used_coupon=id)
             total_discount = 0

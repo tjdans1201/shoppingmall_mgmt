@@ -73,8 +73,8 @@ class OrderAPI(APIView):
         """
         주문정보 등록
         args :
-            request.data: {"buyr_name":str,"buyr_country":str, "buyr_city":str, "buyr_zipx":str, "quantity":int, "price":int}
-            ex) {"buyr_name":"kim","buyr_country":"IN", "buyr_city":"mumbai", "buyr_zipx":"aa11", "quantity":1, "price":150}
+            request.data: {"buyr_name":str,"buyr_country":str, "buyr_city":str, "buyr_zipx":str, "quantity":int, "price":int, "coupon_code":str}
+            ex) {"buyr_name":"kim","buyr_country":"IN", "buyr_city":"mumbai", "buyr_zipx":"aa11", "quantity":1, "price":150, "coupon_code:coupon1}
         Returns:
             201 : {"message" : "주문이 등록되었습니다"}
             400 : {"message" : "리퀘스트 에러가 발생하였습니다."}
@@ -209,6 +209,18 @@ class OrderAPI(APIView):
 
 @api_view(["PUT"])
 def update_pay_state(request, id):
+    """
+    결제 상태 업데이트
+
+    Args:
+        request.data : {"pay_state":str}
+        id : int
+
+    Returns:
+        200 : {"message" : "결제상태가 수정되었습니다."}
+        400 : {"message" : "리퀘스트 에러가 발생하였습니다."}
+        500 : {"message" : "서버 에러가 발생하였습니다."}
+    """    
     try:
         request_body = request.data
         delivery = Delivery.objects.get(id=id)
@@ -233,6 +245,18 @@ def update_pay_state(request, id):
 
 @api_view(["PUT"])
 def update_delivery_state(request, id):
+    """
+    결제 상태 업데이트
+
+    Args:
+        request.data : {"delivery":str}
+        id : int
+
+    Returns:
+        200 : {"message" : "배송정보가 수정되었습니다."}
+        400 : {"message" : "리퀘스트 에러가 발생하였습니다."}
+        500 : {"message" : "서버 에러가 발생하였습니다."}
+    """    
     try:
         request_body = request.data
         delivery = Delivery.objects.get(id=id)
